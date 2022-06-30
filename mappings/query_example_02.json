@@ -1,0 +1,66 @@
+{
+  "query": {
+    "bool" : {
+      "must" : [],
+      "filter": [],
+      "must_not" : [],
+      "should" : [
+        {
+          "more_like_this" : {
+            "fields" : ["doc_text.ja"],
+            "like" : "Once upon a time",
+            "min_term_freq" : 1,
+            "min_doc_freq": 1,
+            "minimum_should_match": "30%"
+          }
+        },
+        {
+          "more_like_this" : {
+            "fields" : ["doc_text.en"],
+            "like" : "Once upon a time",
+            "min_term_freq" : 1,
+            "min_doc_freq": 1,
+            "minimum_should_match": "30%"
+          }
+        }
+      ],
+      "minimum_should_match" : 1,
+    }
+  },
+  "size": 100,
+  "rescore" : {
+    "window_size" : 50,
+    "query" : {
+      "score_mode": "multiply",
+      "rescore_query" : {
+        "function_score" : {
+          "functions": [
+            {
+              "script_score": {
+                "script": {
+                  "source": "return (params.lift + (doc['doc_vector'].size() == 0 ? 0 : cosineSimilarity(params.docVec, 'doc_vector')) + 1) / (1 + params.liftValue);",
+                  "params": {
+                    "docVec": [4, 3.4, -0.2],
+                    "lift": 2.0
+                  }
+                }
+              }
+            },
+            {
+              "script_score": {
+                "script": {
+                  "source": "return (params.lift + (doc['doc_vector'].size() == 0 ? 0 : cosineSimilarity(params.userVec, 'doc_vector')) + 1) / (1 + params.lift);",
+                  "params": {
+                    "userVec": [4, 3.4, -0.2],
+                    "lift": 2.0
+                  }
+                }
+              }
+            }
+          ],
+          "score_mode": "avg",
+        }
+      }
+    }
+  } 
+}
