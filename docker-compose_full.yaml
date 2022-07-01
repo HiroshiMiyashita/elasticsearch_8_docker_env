@@ -2,7 +2,9 @@ version: "3"
 
 services:
   setup:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
+    build: 
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
     user: "0"
@@ -47,7 +49,9 @@ services:
     depends_on:
       setup:
         condition: service_healthy
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
+    build: 
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
     ports:

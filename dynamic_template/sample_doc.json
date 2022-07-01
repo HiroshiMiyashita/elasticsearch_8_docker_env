@@ -1,0 +1,5 @@
+{
+  "my_integer": 5, 
+  "my_string": "Some string",
+  "ip_string": "192.16.10.10"
+}

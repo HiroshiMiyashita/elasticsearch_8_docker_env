@@ -38,7 +38,7 @@
         "text_field": {
           "match_mapping_type": "string",
           "match": "text_*",
-          "runtime": {
+          "mapping": {
             "type": "text",
             "copy_to": "doc_text"
           }
@@ -48,9 +48,10 @@
         "keyword_field": {
           "match_mapping_type": "string",
           "match": "keyword_*",
-          "runtime": {
+          "mapping": {
             "type": "keyword",
-            "normalizer": "keyword_normalizer"
+            "normalizer": "keyword_normalizer",
+            "copy_to": ["doc_text", "label"]
           }
         }
       },
@@ -58,7 +59,7 @@
         "date_field": {
           "match_mapping_type": "string",
           "match": "date_*",
-          "runtime": {
+          "mapping": {
             "type": "date",
             "format": "strict_date_optional_time"
           }
@@ -68,7 +69,7 @@
         "daterange_field": {
           "match_mapping_type": "string",
           "match": "daterange_*",
-          "runtime": {
+          "mapping": {
             "type": "date_range",
             "format": "strict_date_optional_time"
           }
@@ -78,7 +79,7 @@
         "long_field": {
           "match_mapping_type": "long",
           "match": "long_*",
-          "runtime": {
+          "mapping": {
             "type": "long"
           }
         }
@@ -87,7 +88,7 @@
         "double_field": {
           "match_mapping_type": "double",
           "match": "double_*",
-          "runtime": {
+          "mapping": {
             "type": "double"
           }
         }
