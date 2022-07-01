@@ -5,23 +5,29 @@
 - [Elasticsearch 8.0 を docker-compose で起動する][1]
 - [(公式) Install Elasticsearch with Docker][2]
 
-## ファイル説明
+## ファイル/ディレクトリ説明
 
-- [docker-compose\_disable\_security.yaml](docker-compose_disable_security.yaml)
+1. [docker-compose\_disable\_security.yaml](docker-compose_disable_security.yaml)
 
     簡単にセキュリティ無効化で利用したい場合
 
-- [docker-compose\_full.yaml](docker-compose_full.yaml)
+2. [docker-compose\_full.yaml](docker-compose_full.yaml)
 
     フル機能で利用したい場合
 
-    |ユーザ名|パスワード|
+ |ユーザ名|パスワード|
     |:---|:---|
     |elastic|password|
 
-- start\_elasticsearch\_docker.txt
+3. start\_elasticsearch\_docker.txt
 
     elasticsearch serviceを起動するための手順.
+
+4. [example\_01](./example_01/)
+
+    dense_vectorを使った検索用のマッピング定義、クエリのサンプル.\
+    環境設定用、テストクエリ実行用のpythonスクリプトを提供.
+
 
 [1]: https://zenn.dev/fujimotoshinji/scraps/4fb4616976ee00 "Elasticsearch 8.0 を docker-compose で起動する"
 [2]: https://www.elastic.co/guide/en/elasticsearch/reference/8.0/docker.html "(公式) Install Elasticsearch with Docker"
