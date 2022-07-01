@@ -1,0 +1,97 @@
+{
+  "mappings": {
+    "properties": {
+      "doc_text": {
+        "type": "text",
+        "analyzer": "japanese_analyzer",
+        "fields": {
+          "bi_gram": {
+            "type": "text",
+            "term_vector": "with_positions_offsets",
+            "analyzer": "bi_gram_analyzer"
+          },
+          "tri_gram": {
+            "type": "text",
+            "term_vector": "with_positions_offsets",
+            "analyzer": "tri_gram_analyzer"
+          }
+        }
+      },
+      "doc_vector": {
+        "type": "dense_vector",
+        "dims": 3,
+        "index": true,
+        "similarity": "dot_product",
+        "index_options": {
+          "type": "hnsw",
+          "m": 16,
+          "ef_construction": 100
+        }
+      },
+      "label": {
+        "type": "keyword",
+        "normalizer": "keyword_normalizer"
+      }
+    },
+    "dynamic_templates": [
+      {
+        "text_field": {
+          "match_mapping_type": "string",
+          "match": "text_*",
+          "runtime": {
+            "type": "text",
+            "copy_to": "doc_text"
+          }
+        }
+      },
+      {
+        "keyword_field": {
+          "match_mapping_type": "string",
+          "match": "keyword_*",
+          "runtime": {
+            "type": "keyword",
+            "normalizer": "keyword_normalizer"
+          }
+        }
+      },
+      {
+        "date_field": {
+          "match_mapping_type": "string",
+          "match": "date_*",
+          "runtime": {
+            "type": "date",
+            "format": "strict_date_optional_time"
+          }
+        }
+      },
+      {
+        "daterange_field": {
+          "match_mapping_type": "string",
+          "match": "daterange_*",
+          "runtime": {
+            "type": "date_range",
+            "format": "strict_date_optional_time"
+          }
+        }
+      },
+      {
+        "long_field": {
+          "match_mapping_type": "long",
+          "match": "long_*",
+          "runtime": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "double_field": {
+          "match_mapping_type": "double",
+          "match": "double_*",
+          "runtime": {
+            "type": "double"
+          }
+        }
+      }
+    ]
+  }
+}

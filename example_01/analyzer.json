@@ -1,0 +1,67 @@
+{
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "keyword_normalizer": {
+          "type": "custom",
+          "filter":[
+              "normalize",
+              "lowercase",
+              "icu_folding"
+          ]
+        }
+      },
+      "tokenizer": {
+        "ja_tokenizer": {
+          "mode": "search",
+          "type": "kuromoji_tokenizer",
+          "discard_compound_token": true
+        },
+        "bi_gram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 2
+        },
+        "tri_gram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 3
+        }
+      },
+      "analyzer": {
+        "japanese_analyzer": {
+          "type": "custom",
+          "char_filter": [
+            "normalize"
+          ],
+          "tokenizer": "ja_tokenizer",
+          "filter": [
+            "kuromoji_baseform",
+            "kuromoji_part_of_speech",
+            "cjk_width",
+            "ja_stop",
+            "kuromoji_stemmer",
+            "lowercase",
+            "icu_folding"
+          ]
+        },
+        "bi_gram_analyzer": {
+          "type": "custom",
+          "tokenizer": "bi_gram_tokenizer",
+	        "filter": [
+	          "lowercase",
+            "icu_folding"
+	        ]
+        },
+        "tri_gram_analyzer": {
+          "type": "custom",
+          "tokenizer": "tri_gram_tokenizer",
+	        "filter": [
+	          "lowercase",
+            "icu_folding"
+	        ]
+        }
+      }
+    }
+  }
+}

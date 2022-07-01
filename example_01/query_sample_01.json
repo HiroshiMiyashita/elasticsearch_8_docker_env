@@ -7,16 +7,7 @@
       "should" : [
         {
           "more_like_this" : {
-            "fields" : ["doc_text.ja"],
-            "like" : "Once upon a time",
-            "min_term_freq" : 1,
-            "min_doc_freq": 1,
-            "minimum_should_match": "30%"
-          }
-        },
-        {
-          "more_like_this" : {
-            "fields" : ["doc_text.en"],
+            "fields" : ["doc_text"],
             "like" : "Once upon a time",
             "min_term_freq" : 1,
             "min_doc_freq": 1,
@@ -24,7 +15,7 @@
           }
         }
       ],
-      "minimum_should_match" : 1,
+      "minimum_should_match" : 1
     }
   },
   "size": 100,
@@ -38,10 +29,11 @@
             {
               "script_score": {
                 "script": {
-                  "source": "return (params.lift + (doc['doc_vector'].size() == 0 ? 0 : cosineSimilarity(params.docVec, 'doc_vector')) + 1) / (1 + params.liftValue);",
+                  "source": "return 1.0 + params.weidht * (doc[params.doc_vector].size() == 0 ? 0.0 : (cosineSimilarity(params.docVec, doc[params.field]) + 1));",
                   "params": {
+                    "field": "doc_vector",
                     "docVec": [4, 3.4, -0.2],
-                    "lift": 2.0
+                    "weight": 2.0
                   }
                 }
               }
@@ -49,16 +41,17 @@
             {
               "script_score": {
                 "script": {
-                  "source": "return (params.lift + (doc['doc_vector'].size() == 0 ? 0 : cosineSimilarity(params.userVec, 'doc_vector')) + 1) / (1 + params.lift);",
+                  "source": "return 1.0 + params.weidht * (doc[params.doc_vector].size() == 0 ? 0.0 : (cosineSimilarity(params.docVec, doc[params.field]) + 1));",
                   "params": {
+                    "field": "doc_vector",
                     "userVec": [4, 3.4, -0.2],
-                    "lift": 2.0
+                    "weight": 2.0
                   }
                 }
               }
             }
           ],
-          "score_mode": "avg",
+          "score_mode": "avg"
         }
       }
     }
