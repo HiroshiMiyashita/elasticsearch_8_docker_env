@@ -1,9 +1,0 @@
-# Start Elasticsearch Docker Envrionment.
-
-1. Start Docker Service
-
-    sudo service docker start
-
-2. Start elasticserch service defined in docker-compose.yaml file.
-
-    docker-compose up -d
