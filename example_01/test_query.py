@@ -78,7 +78,7 @@ def mk_query(
 def test_query(els_clt: Elasticsearch, index: str, query: Mapping[str, Any]) -> None:
     try:
         res = els_clt.search(index=index, **query)
-        print(json.dumps(res.body))
+        print(json.dumps(res.body, ensure_ascii=False))
     except Exception as e:
         print(e)
 
