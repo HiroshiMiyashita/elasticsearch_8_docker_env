@@ -5,6 +5,14 @@
         "type": "text",
         "analyzer": "japanese_analyzer",
         "fields": {
+          "shingle": {
+            "type": "text",
+            "analyzer": "japanese_shingle_analyzer"
+          },
+          "reverse": {
+            "type": "text",
+            "analyzer": "japanese_reverse_analyzer"
+          },
           "bi_gram": {
             "type": "text",
             "term_vector": "with_positions_offsets",

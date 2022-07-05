@@ -39,6 +39,13 @@
             "max_gram": 3
           }
         },
+        "filter": {
+          "shingle": {
+            "type": "shingle",
+            "min_shingle_size": 2,
+            "max_shingle_size": 3
+          }
+        },
         "analyzer": {
           "japanese_analyzer": {
             "type": "custom",
@@ -54,6 +61,40 @@
               "kuromoji_stemmer",
               "lowercase",
               "icu_folding"
+            ]
+          },
+          "japanese_shingle_analyzer": {
+            "type": "custom",
+            "char_filter": [
+              "normalize"
+            ],
+            "tokenizer": "ja_tokenizer",
+            "filter": [
+              "kuromoji_baseform",
+              "kuromoji_part_of_speech",
+              "cjk_width",
+              "ja_stop",
+              "kuromoji_stemmer",
+              "lowercase",
+              "icu_folding",
+              "shingle"
+            ]
+          },
+          "japanese_reverse_analyzer": {
+            "type": "custom",
+            "char_filter": [
+              "normalize"
+            ],
+            "tokenizer": "ja_tokenizer",
+            "filter": [
+              "kuromoji_baseform",
+              "kuromoji_part_of_speech",
+              "cjk_width",
+              "ja_stop",
+              "kuromoji_stemmer",
+              "lowercase",
+              "icu_folding",
+              "reverse"
             ]
           },
           "bi_gram_analyzer": {
