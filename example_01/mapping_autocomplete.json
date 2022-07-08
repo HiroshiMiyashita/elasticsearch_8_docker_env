@@ -1,0 +1,12 @@
+{
+  "mappings": {
+    "properties": {
+      "suggest": {
+        "type": "completion"
+      },
+      "term": {
+        "type": "keyword"
+      }
+    }
+  }
+}

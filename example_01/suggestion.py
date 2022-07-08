@@ -81,8 +81,36 @@ def mk_phrase_suggestion_query(
     }
 
 
+def mk_auto_complete_suggestion_query(
+        prefix: str,
+        size: int
+        ) -> Mapping[str, Any]:
+    '''prefixに対応する単語をサジェストするクエリを返す.
+    
+    > 参考)
+    > 
+    > [Suggesters](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html)
+
+    @param prefix 単語のプレフィックス.
+    @param size suggestionとして返すドキュメント数.
+    '''
+    return {
+      "suggest": {
+        "location_suggest": {
+          "prefix": prefix,
+          "completion": {         
+            "field": "suggest",
+            "skip_duplicates": True,
+            "size": size
+          }
+        }
+      }
+    }
+
+
 if __name__ == '__main__':
     index = "resource_test"
+    index_auto_complete = "resource_auto_complete"
 
     els_clt: Elasticsearch = Elasticsearch(hosts='http://localhost:9200')
 
@@ -96,6 +124,11 @@ if __name__ == '__main__':
         # あえてopensearchとelasticsearchの綴りを間違えている.
         query = mk_phrase_suggestion_query("opensrch elasticsaerch lucene fork", 5)
         res = els_clt.search(index=index, **query)
+        print(json.dumps(res.body, ensure_ascii=False))
+
+        # プレフィックス
+        query = mk_auto_complete_suggestion_query("みな", 5)
+        res = els_clt.search(index=index_auto_complete, **query)
         print(json.dumps(res.body, ensure_ascii=False))
     except Exception as e:
         print(e)

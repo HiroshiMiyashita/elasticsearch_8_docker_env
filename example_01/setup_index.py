@@ -31,8 +31,27 @@ def imput_data(
     els_clt.indices.flush(index=index)
     
 
+def input_auto_comp_data(
+        els_clt: Elasticsearch,
+        index: str,
+        corpus: List[str]) -> None:
+    doc_id = 0
+    for text in corpus:
+        reading_form, location = text.split()
+        doc = {
+            "suggest": {
+                "input": [reading_form, location]
+            },
+            "term": location
+        }
+        els_clt.create(index=index, id=f'doc_{doc_id}', document=doc)
+        doc_id += 1
+    els_clt.indices.flush(index=index)
+    
+
 if __name__ == '__main__':
     index = "resource_test"
+    index_auto_comp = "resource_auto_complete"
 
     els_clt: Elasticsearch = Elasticsearch(hosts='http://localhost:9200')
 
@@ -47,9 +66,21 @@ if __name__ == '__main__':
     with open('mapping.json', 'r') as inF:
         mapping = json.load(inF)
     els_clt.indices.create(index=index, **mapping)
+    
+    # create index.
+    if els_clt.indices.exists(index=index_auto_comp):
+        els_clt.indices.delete(index=index_auto_comp)
+    with open('mapping_autocomplete.json', 'r') as inF:
+        mapping = json.load(inF)
+    els_clt.indices.create(index=index_auto_comp, **mapping)
 
     # input data
     with open('corpus.txt', 'r') as inF:
         corpus = inF.readlines()
     labels = ['hoge', 'fuga', 'foo', 'bar']
     imput_data(els_clt=els_clt, index=index, corpus=corpus, labels=labels)
+
+    # input data
+    with open('location_name.txt', 'r') as inF:
+        corpus = inF.readlines()
+    input_auto_comp_data(els_clt=els_clt, index=index_auto_comp, corpus=corpus)
