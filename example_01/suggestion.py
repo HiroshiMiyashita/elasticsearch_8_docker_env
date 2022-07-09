@@ -126,9 +126,10 @@ if __name__ == '__main__':
         res = els_clt.search(index=index, **query)
         print(json.dumps(res.body, ensure_ascii=False))
 
-        # プレフィックス
-        query = mk_auto_complete_suggestion_query("みな", 5)
-        res = els_clt.search(index=index_auto_complete, **query)
-        print(json.dumps(res.body, ensure_ascii=False))
+        # プレフィックス(get auto complete candidates)
+        for prefix in ["osya", "mina", "sha"]:
+            query = mk_auto_complete_suggestion_query(prefix, 5)
+            res = els_clt.search(index=index_auto_complete, **query)
+            print(json.dumps(res.body, ensure_ascii=False))
     except Exception as e:
         print(e)

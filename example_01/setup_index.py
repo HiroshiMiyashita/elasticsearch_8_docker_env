@@ -4,10 +4,11 @@ import json
 from random import randint
 
 from typing import List
-from xmlrpc.client import DateTime
+from typing import Set
 
 import numpy as np
 from elasticsearch import Elasticsearch
+import pykakasi
 
 
 def imput_data(
@@ -35,12 +36,17 @@ def input_auto_comp_data(
         els_clt: Elasticsearch,
         index: str,
         corpus: List[str]) -> None:
+    kks = pykakasi.kakasi()
     doc_id = 0
     for text in corpus:
         reading_form, location = text.split()
+        cand_strs: Set[str] = set()
+        cand_strs.add(location)
+        for x in kks.convert(reading_form):
+            cand_strs.update(x.values())
         doc = {
             "suggest": {
-                "input": [reading_form, location]
+                "input": list(cand_strs)
             },
             "term": location
         }
