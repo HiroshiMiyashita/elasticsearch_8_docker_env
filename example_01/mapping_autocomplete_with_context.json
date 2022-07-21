@@ -1,0 +1,23 @@
+{
+  "mappings": {
+    "properties": {
+      "suggest": {
+        "type": "completion",
+        "contexts": [
+          {
+            "name": "area",
+            "type": "category",
+            "path": "belonging_area"
+          }
+        ]
+      },
+      "location": {
+        "type": "keyword"
+      },
+      "belonging_area": {
+        "type": "keyword",
+        "normalizer": "keyword_normalizer"
+      }
+    }
+  }
+}

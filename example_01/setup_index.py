@@ -39,16 +39,17 @@ def input_auto_comp_data(
     kks = pykakasi.kakasi()
     doc_id = 0
     for text in corpus:
-        reading_form, location = text.split()
+        reading_form, nation, prefecture, location = text.split()
         cand_strs: Set[str] = set()
         cand_strs.add(location)
         for x in kks.convert(reading_form):
             cand_strs.update(x.values())
         doc = {
             "suggest": {
-                "input": list(cand_strs)
+                "input": list(cand_strs),
             },
-            "term": location
+            "location": location,
+            "belonging_area": [nation, prefecture]
         }
         els_clt.create(index=index, id=f'doc_{doc_id}', document=doc)
         doc_id += 1
@@ -58,6 +59,7 @@ def input_auto_comp_data(
 if __name__ == '__main__':
     index = "resource_test"
     index_auto_comp = "resource_auto_complete"
+    index_auto_comp_with_context = "resource_auto_complete_with_context"
 
     els_clt: Elasticsearch = Elasticsearch(hosts='http://localhost:9200')
 
@@ -73,20 +75,32 @@ if __name__ == '__main__':
         mapping = json.load(inF)
     els_clt.indices.create(index=index, **mapping)
     
-    # create index.
+    # create index for auto complete.
     if els_clt.indices.exists(index=index_auto_comp):
         els_clt.indices.delete(index=index_auto_comp)
     with open('mapping_autocomplete.json', 'r') as inF:
         mapping = json.load(inF)
     els_clt.indices.create(index=index_auto_comp, **mapping)
+    
+    # create index for auto complete with context.
+    if els_clt.indices.exists(index=index_auto_comp_with_context):
+        els_clt.indices.delete(index=index_auto_comp_with_context)
+    with open('mapping_autocomplete_with_context.json', 'r') as inF:
+        mapping = json.load(inF)
+    els_clt.indices.create(index=index_auto_comp_with_context, **mapping)
 
-    # input data
+    # input data.
     with open('corpus.txt', 'r') as inF:
         corpus = inF.readlines()
     labels = ['hoge', 'fuga', 'foo', 'bar']
     imput_data(els_clt=els_clt, index=index, corpus=corpus, labels=labels)
 
-    # input data
+    # input data for auto complete.
     with open('location_name.txt', 'r') as inF:
         corpus = inF.readlines()
     input_auto_comp_data(els_clt=els_clt, index=index_auto_comp, corpus=corpus)
+
+    # input data for auto complete with context.
+    with open('location_name.txt', 'r') as inF:
+        corpus = inF.readlines()
+    input_auto_comp_data(els_clt=els_clt, index=index_auto_comp_with_context, corpus=corpus)

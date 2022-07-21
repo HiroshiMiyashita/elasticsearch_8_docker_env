@@ -62,6 +62,7 @@ def mk_phrase_suggestion_query(
             "phrase": {
               "field": "doc_text.shingle",
               "size": size,
+              "gram_size": 3,
               "direct_generator": [
                 {
                   "field": "doc_text.shingle",
@@ -108,9 +109,53 @@ def mk_auto_complete_suggestion_query(
     }
 
 
+def mk_auto_complete_suggestion_with_context_query(
+        prefix: str,
+        natin: str,
+        prefecture: str,
+        size: int
+        ) -> Mapping[str, Any]:
+    '''prefixに対応する単語をコンテキスト(nation, prefectureで指定)を指定してサジェストするクエリを返す.
+    
+    > 参考)
+    > 
+    > [Suggesters](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html)
+
+    @param prefix 単語のプレフィックス.
+    @param nation 所属する国(これがコンテキストの役割を持つ).
+    @param prefecture 所属する県(これがコンテキストの役割を持つ).
+    @param size suggestionとして返すドキュメント数.
+    '''
+    return {
+      "suggest": {
+        "location_suggest": {
+          "prefix": prefix,
+          "completion": {         
+            "field": "suggest",
+            "skip_duplicates": True,
+            "contexts": {
+              "area": [
+                {
+                  "context": nation,
+                  "boost": 1
+                },
+                {
+                  "context": prefecture,
+                  "boost": 3
+                }
+              ]
+            },
+            "size": size
+          }
+        }
+      }
+    }
+
+
 if __name__ == '__main__':
     index = "resource_test"
     index_auto_complete = "resource_auto_complete"
+    index_auto_complete_with_context = "resource_auto_complete_with_context"
 
     els_clt: Elasticsearch = Elasticsearch(hosts='http://localhost:9200')
 
@@ -120,16 +165,24 @@ if __name__ == '__main__':
         query = mk_term_suggestion_query("elasticsaerch lucene fork", 5)
         res = els_clt.search(index=index, **query)
         print(json.dumps(res.body, ensure_ascii=False))
+        print('----------')
 
         # あえてopensearchとelasticsearchの綴りを間違えている.
         query = mk_phrase_suggestion_query("opensrch elasticsaerch lucene fork", 5)
         res = els_clt.search(index=index, **query)
         print(json.dumps(res.body, ensure_ascii=False))
+        print('----------')
 
         # プレフィックス(get auto complete candidates)
-        for prefix in ["osya", "mina", "sha"]:
+        for prefix, nation, prefecture in [("os", "日本", "北海道"), ("mi", "日本", "熊本県"), ("sh", "日本", "長野県")]:
             query = mk_auto_complete_suggestion_query(prefix, 5)
             res = els_clt.search(index=index_auto_complete, **query)
             print(json.dumps(res.body, ensure_ascii=False))
+            print('----------')
+
+            query = mk_auto_complete_suggestion_with_context_query(prefix, nation, prefecture, 10)
+            res = els_clt.search(index=index_auto_complete_with_context, **query)
+            print(json.dumps(res.body, ensure_ascii=False))
+            print('----------')
     except Exception as e:
         print(e)
