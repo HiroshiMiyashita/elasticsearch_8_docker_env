@@ -44,6 +44,11 @@
             "type": "shingle",
             "min_shingle_size": 2,
             "max_shingle_size": 3
+          },
+          "synonym": {
+            "type": "synonym",
+            "lenient": true,
+            "synonyms_path": "analysis/synonym.txt"
           }
         },
         "analyzer": {
@@ -58,6 +63,7 @@
               "kuromoji_part_of_speech",
               "cjk_width",
               "ja_stop",
+	      "synonym",
 	      "kuromoji_number",
               "kuromoji_stemmer",
 	      "kuromoji_iteration_mark",
