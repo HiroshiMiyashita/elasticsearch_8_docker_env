@@ -30,6 +30,8 @@ def main():
     with open(elasticsearch_synonym_dict_fn, 'w') as out_f:
         for _, synonymInfo in sorted(grpidToSynonymInfo.items()):
             orgWords, synonymWords = synonymInfo
+            if len(orgWords) == 0:
+                continue
             out_f.write(f'{",".join(orgWords)} => {",".join(synonymWords)}\n')
 
 

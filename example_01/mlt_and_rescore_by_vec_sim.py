@@ -3,6 +3,7 @@ import json
 from typing import Any
 from typing import List
 from typing import Mapping
+from typing import Optional
 
 import numpy as np
 from elasticsearch import Elasticsearch
@@ -15,6 +16,7 @@ def mk_mlt_and_vec_sim_query(
         user_vec: Any,
         user_vec_weight: float,
         size: int,
+        analyzer: Optional[str]=None,
         ) -> Mapping[str, Any]:
     '''クエリの結果をベクトルの類似度でさらにリランキングするクエリ.
     
@@ -30,7 +32,19 @@ def mk_mlt_and_vec_sim_query(
     @param user_vec ユーザベクトル.
     @param user_vec_weight ユーザベクトルの類似度のスコアへの寄与度の重み.
     @param size 何件の結果を取得するか.
+    @param analyzer 使用するanalyzer.
     '''
+
+    more_like_this_clouse = {
+      "fields" : ["doc_text"],
+      "like" : like,
+      "min_term_freq" : 1,
+      "min_doc_freq": 1,
+      "minimum_should_match": "30%",
+    }
+    if analyzer is not None:
+        more_like_this_clouse["analyzer"] = analyzer
+
     return {
       "query": {
         "bool" : {
@@ -39,13 +53,7 @@ def mk_mlt_and_vec_sim_query(
           "must_not" : [],
           "should" : [
             {
-              "more_like_this" : {
-                "fields" : ["doc_text"],
-                "like" : like,
-                "min_term_freq" : 1,
-                "min_doc_freq": 1,
-                "minimum_should_match": "30%"
-              }
+              "more_like_this" : more_like_this_clouse
             }
           ],
           "minimum_should_match" : 1
@@ -104,7 +112,14 @@ if __name__ == '__main__':
     # execute query.
     try:
         query = mk_mlt_and_vec_sim_query(
-            "elasticsearch lucene fork", doc_vec, 5, user_vec, 2, 5)
+            "エラスティック lucene fork", doc_vec, 5, user_vec, 2, 5)
+        res = els_clt.search(index=index, **query)
+        print(json.dumps(res.body, ensure_ascii=False))
+        print("----------")
+
+        query = mk_mlt_and_vec_sim_query(
+            "エラスティック lucene fork", doc_vec, 5, user_vec, 2, 5,
+            analyzer="japanese_search_analyzer")
         res = els_clt.search(index=index, **query)
         print(json.dumps(res.body, ensure_ascii=False))
     except Exception as e:

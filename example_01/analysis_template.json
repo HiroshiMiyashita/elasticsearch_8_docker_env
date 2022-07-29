@@ -45,10 +45,11 @@
             "min_shingle_size": 2,
             "max_shingle_size": 3
           },
-          "synonym": {
-            "type": "synonym",
-            "lenient": true,
-            "synonyms_path": "analysis/synonym.txt"
+          "graph_synonym": {
+            "type": "synonym_graph",
+            "synonyms_path": "analysis/synonym.txt",
+	    "lenient": true,
+	    "updatable": true
           }
         },
         "analyzer": {
@@ -61,12 +62,28 @@
             "filter": [
               "kuromoji_baseform",
               "kuromoji_part_of_speech",
-              "cjk_width",
-              "ja_stop",
-	      "synonym",
 	      "kuromoji_number",
               "kuromoji_stemmer",
-	      "kuromoji_iteration_mark",
+              "cjk_width",
+              "ja_stop",
+              "lowercase",
+              "icu_folding"
+            ]
+          },
+          "japanese_search_analyzer": {
+            "type": "custom",
+            "char_filter": [
+              "normalize"
+            ],
+            "tokenizer": "ja_tokenizer",
+            "filter": [
+              "kuromoji_baseform",
+              "kuromoji_part_of_speech",
+	      "kuromoji_number",
+              "kuromoji_stemmer",
+              "cjk_width",
+              "ja_stop",
+	      "graph_synonym",
               "lowercase",
               "icu_folding"
             ]
