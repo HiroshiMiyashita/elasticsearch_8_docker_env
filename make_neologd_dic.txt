@@ -1,0 +1,17 @@
+FROM ubuntu:22.04
+
+RUN apt update && \
+  apt upgrade -y && \
+  apt install -y git && \
+  apt install -y mecab && \
+  apt install -y libmecab-dev && \
+  apt install -y make && \
+  apt install -y curl && \
+  apt install -y xz-utils && \
+  apt install -y file && \
+  apt install -y sudo
+
+
+RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git && \
+  cd mecab-ipadic-neologd && \
+  ./bin/install-mecab-ipadic-neologd -n -y
